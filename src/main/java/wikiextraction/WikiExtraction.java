@@ -140,6 +140,7 @@ public static void main(String[] args) throws IOException{
         	category = category.substring(1, category.length()-1);
         	result.add(category);
         }
+        
         return result;
 	}
 }
