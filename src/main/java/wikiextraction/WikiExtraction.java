@@ -126,7 +126,7 @@ public static void main(String[] args) throws IOException{
 	
 	//costruisco metodo per ricevere le pagine appartenenti ad una categoria
 	private static Set<String> getCategoryMembers(String page) throws IOException{
-		URL url = new URL("https://en.wikipedia.org/w/api.php?action=query&list=categorymembers&format=json&cmtitle=Category:concrete");
+		URL url = new URL("https://en.wikipedia.org/w/api.php?action=query&list=categorymembers&format=json&cmtitle=Category:"+page);
 		
         HttpURLConnection request = (HttpURLConnection) url.openConnection();
         request.connect();
