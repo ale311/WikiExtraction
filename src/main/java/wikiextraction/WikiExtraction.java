@@ -46,22 +46,13 @@ public static void main(String[] args) throws IOException{
 	Posso quindi poi interrogare ed estrarre ulteriori informazioni evitando di elaborarlo ogni volta per info diverse
 	*/
 	private static JsonElement getJsonElement(String action, String title, String page, String req) throws IOException{
-//		URL url = new URL("https://en.wikipedia.org/w/api.php?action=query&titles="+page+"&prop="+req+"&format=json");
-		
 		URL url = new URL("https://en.wikipedia.org/w/api.php?action=query&"+title+"="+page+"&"+action+"="+req+"&format=json");
-//		URL url = new URL("https://en.wikipedia.org/w/api.php?action=query&list=categorymembers&format=json&cmtitle=Category:concrete");
-		
         HttpURLConnection request = (HttpURLConnection) url.openConnection();
         request.connect();
- 
         JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
-        
         JsonElement pages = jsonElement.getAsJsonObject().get("query").getAsJsonObject().get("pages");
-        
         Set<Entry<String, JsonElement>> entrySet = pages.getAsJsonObject().entrySet();
- 
         JsonElement yourDesiredElement = null;
- 
         for(Map.Entry<String,JsonElement> entry : entrySet){
             yourDesiredElement = entry.getValue();
         } 
@@ -70,22 +61,15 @@ public static void main(String[] args) throws IOException{
 	
 	private static String getExtract(String page) throws IOException{
 		URL url = new URL("https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro=&explaintext=&titles="+page);
-		
         HttpURLConnection request = (HttpURLConnection) url.openConnection();
         request.connect();
- 
         JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
-        
         JsonElement pages = jsonElement.getAsJsonObject().get("query").getAsJsonObject().get("pages");
 		JsonElement elem = getJsonElement("prop", "titles",page+"&exintro=&explaintext=", "extracts");
 		String extract = elem.getAsJsonObject().get("extract").toString();
 		extract = extract.substring(1, extract.length()-5);
-		
 		return extract;
 	}
-	/*questo è il metodo che restituisce un insieme di categorie a cui la pagina selezionata appartiene
-	 * nel metodo viene chiamato il getJsonElement che poi, una volta restituito, sarà elaborato per ottenere le categorie
-	 */
 	private static Set<String> getCategories(String page) throws IOException{
 		JsonElement elem = getJsonElement("prop", "titles", page, "categories");
 		HashSet<String> result = new HashSet<String>();
@@ -100,10 +84,8 @@ public static void main(String[] args) throws IOException{
 	private static Set<String> getLinks(String page) throws IOException{
 		JsonElement elem = getJsonElement("prop", "titles",page, "links");
 		HashSet<String> result = new HashSet<String>();
-//		System.out.println(elem);
 		for(JsonElement l : elem.getAsJsonObject().get("links").getAsJsonArray()){
 			String link = l.getAsJsonObject().get("title").toString();
-			
 			link = link.substring(1, link.length()-1);
 			result.add(link);
 		}
@@ -113,26 +95,20 @@ public static void main(String[] args) throws IOException{
 	private static Set<String> getLinksHere(String page) throws IOException{
 		JsonElement elem = getJsonElement("prop", "titles",page, "linkshere");
 		HashSet<String> result = new HashSet<String>();
-//		System.out.println(elem);
 		for(JsonElement l : elem.getAsJsonObject().get("linkshere").getAsJsonArray()){
 			String link = l.getAsJsonObject().get("title").toString();
-			
 			link = link.substring(1, link.length()-1);
 			result.add(link);
 			System.out.println(link);
 		}
 		return result;
 	}
-	
-	//costruisco metodo per ricevere le pagine appartenenti ad una categoria
 	private static Set<String> getCategoryMembers(String page) throws IOException{
 		URL url = new URL("https://en.wikipedia.org/w/api.php?action=query&list=categorymembers&format=json&cmtitle=Category:"+page);
-		
         HttpURLConnection request = (HttpURLConnection) url.openConnection();
         request.connect();
         HashSet<String> result = new HashSet<String>();
         JsonElement jsonElement = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
-        
         JsonElement categorymembers = jsonElement.getAsJsonObject().get("query").getAsJsonObject().get("categorymembers");
         JsonArray catMembArray = categorymembers.getAsJsonArray();
         for(int i = 0; i<catMembArray.size(); i++){
@@ -140,7 +116,6 @@ public static void main(String[] args) throws IOException{
         	category = category.substring(1, category.length()-1);
         	result.add(category);
         }
-        
         return result;
 	}
 }
